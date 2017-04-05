@@ -765,7 +765,20 @@ if (typeof Object.create !== 'function') {
                             post.description = Utility.stripHTML(item.summary.content);
                         }
                         post.social_network = 'rss';
-                        post.link = item.link.href;
+                        post.link = '';
+                        if (item.link.href !== undefined) {
+                          post.link = item.link.href;
+                        }
+                        else {
+                          for (var i in item.link) {
+                            if (item.link[i].rel === 'alternate') {
+                              post.link = item.link[i].href;
+                            }
+                            else if (item.link[i].rel === 'enclosure' && item.link[i].type.indexOf('image') === 0 && options.show_media) {
+                              post.attachment = '<img class="attachment" src="' + item.link[i].href + '" />';
+                            }
+                          }
+                        }
                         if (options.show_media && item.thumbnail !== undefined ) {
                             post.attachment = '<img class="attachment" src="' + item.thumbnail.url + '" />';
                         }
